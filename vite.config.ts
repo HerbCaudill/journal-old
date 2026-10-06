@@ -6,7 +6,26 @@ import wasm from "vite-plugin-wasm"
 import topLevelAwait from "vite-plugin-top-level-await"
 import path from "path"
 
+/** Route the assigned loopback port and hot reload through the shared HTTPS proxy. */
+const localhostServer = process.env.PORTLESS_URL
+  ? {
+      port: Number(process.env.PORT),
+      host: "127.0.0.1",
+      strictPort: true,
+      allowedHosts: [new URL(process.env.PORTLESS_URL).hostname],
+      hmr: {
+        protocol: "wss" as const,
+        host: new URL(process.env.PORTLESS_URL).hostname,
+        clientPort: 443,
+      },
+    }
+  : {}
+
 export default defineConfig({
+  ...(process.env.PORTLESS_URL
+    ? { cacheDir: `node_modules/.cache/localhost-dev/${process.env.PORT}` }
+    : {}),
+  server: { ...localhostServer },
   plugins: [
     wasm(),
     topLevelAwait(),

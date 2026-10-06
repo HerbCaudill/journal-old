@@ -21,7 +21,7 @@ export default defineConfig({
     // The preview server serves the pre-built production files
     command: "pnpm preview",
     url: "http://localhost:4173",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: false,
     timeout: 60000, // 60 seconds to allow the server to start
   },
 })
